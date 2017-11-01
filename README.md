@@ -20,9 +20,9 @@ xor encryptor with garbage inserter
 `encrypt` and `decrypt` - does a simple xor function on the input file using the given password.  
 Parameters `--input` and `--password` are required. Can take `--output`.  
 
-`defile` - inserts random garbage into a file.  Requires `input`.  Can take `--output`, `--bytes-per-block`, `--max-block-size`, and `--garbage-signifier`.  
+`defile` - inserts random garbage into a file.  Requires `--input`.  Can take `--output`, `--bytes-per-block`, `--max-block-size`, and `--garbage-signifier`.  
 
-`clean` - removes garbage from a file. Requires `input`. Can take `--output` and `--garbage-signifier`.  
+`clean` - removes garbage from a file. Requires `--input`. Can take `--output` and `--garbage-signifier`.  
 
 `encrypt-garbage` - inserts random garbage into a file and then performs a xor encryption.  Requires `--input` and `--password`.  Can take `--output`, `--bytes-per-block`, `--max-block-size`, and `--garbage-signifier`.  
 
