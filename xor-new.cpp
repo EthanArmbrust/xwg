@@ -5,23 +5,9 @@
 
 using namespace std;
 
-bool cmp_files(const std::string& lhsFilename, const std::string& rhsFilename);
-
-void unzip_file(const std::string& filename);
-
-void zip_file(const std::string& filename);
-
-void encrypt_file(const std::string& filename, const std::string& password);
-
-std::string crack_file(const std::string& originalFilename, const std::string& encryptedFilename);
-
-void garbageInserter(const std::string& filename);
-
-void garbageDeleter(const std::string& filename);
-
 char * insertGarbage(char * fileContents, int filesize, int bytesPerBlock, int maxBlockSize, char garbageSignifier);
 
-std::vector<char> deleteGarbage(char * fileContents, int filesize);
+std::vector<char> deleteGarbage(char * fileContents, int filesize, char garbageSignifier);
 
 char * xorCharArray(char * input, int size, const std::string& password);
 
@@ -81,7 +67,7 @@ int main(int argc, char * argv[]){
 
   
   string possibleIn = getOption("--input", argc, argv);
-  if(possibleIn != "__BAD_OPTION" && possibleIn != "__OPTION_NOT_FOUND__"){
+  if(possibleIn != "__BAD_OPTION__" && possibleIn != "__OPTION_NOT_FOUND__"){
 	filename = possibleIn;
   }
   else{
@@ -114,12 +100,14 @@ int main(int argc, char * argv[]){
     delete[] garbo;
   }
   if(mode == "clean"){ 
+    cout << "garbage signifier: " << garbageSignifier << endl;
     char * oc = fileReader(filename);
-    vector<char> cleaned = deleteGarbage(oc, getReadFileSize());
+    vector<char> cleaned = deleteGarbage(oc, getReadFileSize(), garbageSignifier);
     fileWriter(cleaned, outputFilename);
     delete[] oc;
   }
   if(mode == "encrypt-garbage"){
+    cout << "garbage signifier: " << garbageSignifier << endl;
     char * oc = fileReader(filename);
     char * garbo = insertGarbage(oc, getReadFileSize(), iBytesPerBlock, maxGarbageSize, garbageSignifier);
     char * xord = xorCharArray(garbo, getGarbageSize(), password);
@@ -129,9 +117,10 @@ int main(int argc, char * argv[]){
     delete[] xord;
   }
   if(mode == "decrypt-garbage"){ 
+    cout << "garbage signifier: " << garbageSignifier << endl;
     char * oc = fileReader(filename);
     char * xord = xorCharArray(oc, getReadFileSize(), password);
-    vector<char> cleaned = deleteGarbage(xord, getReadFileSize());
+    vector<char> cleaned = deleteGarbage(xord, getReadFileSize(), garbageSignifier);
     fileWriter(cleaned, outputFilename);
     delete[] oc;
     delete[] xord;
