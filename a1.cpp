@@ -131,7 +131,7 @@ char * xorCharArray(char * input, int size, const std::string& password){
 }
 
 char randomChar(){
-  return (char) (rand() % 128);
+  return (char) (rand() % 256);
 }
 
 vector<char> deleteGarbage(char * fileContents, int filesize, char garbageSignifier){

@@ -37,17 +37,17 @@ string getOption(string optionName, int argc, char * argv[]){
 
 int main(int argc, char * argv[]){
 
-  if(argc > 3){
+  if(argc > 2){
 
   string mode = argv[1];
   string filename;
-  string password;
+  string password = "";
 
-  int maxGarbageSize = 256;
+  int maxGarbageSize = 128;
   char garbageSignifier = '~';
 
   string sBytesPerBlock = getOption("--bytes-per-block", argc, argv);
-  int iBytesPerBlock = 10;
+  int iBytesPerBlock = 2;
   if(sBytesPerBlock != "__BAD_OPTION__" && sBytesPerBlock != "__OPTION_NOT_FOUND__"){		
   	iBytesPerBlock = stoi(sBytesPerBlock);
   }
@@ -75,7 +75,7 @@ int main(int argc, char * argv[]){
 	return 1;
   }
 
-  string outputFilename = filename + "-out";
+  string outputFilename = filename + mode;
   string possibleOut = getOption("--output", argc, argv);
   if(possibleOut != "__BAD_OPTION__" && possibleOut != "__OPTION_NOT_FOUND__"){
 	outputFilename = possibleOut;
@@ -100,14 +100,14 @@ int main(int argc, char * argv[]){
     delete[] garbo;
   }
   if(mode == "clean"){ 
-    cout << "garbage signifier: " << garbageSignifier << endl;
     char * oc = fileReader(filename);
     vector<char> cleaned = deleteGarbage(oc, getReadFileSize(), garbageSignifier);
     fileWriter(cleaned, outputFilename);
     delete[] oc;
   }
-  if(mode == "encrypt-garbage"){
-    cout << "garbage signifier: " << garbageSignifier << endl;
+
+
+  if(mode == "encrypt-garbage" || mode == "eg"){
     char * oc = fileReader(filename);
     char * garbo = insertGarbage(oc, getReadFileSize(), iBytesPerBlock, maxGarbageSize, garbageSignifier);
     char * xord = xorCharArray(garbo, getGarbageSize(), password);
@@ -116,8 +116,7 @@ int main(int argc, char * argv[]){
     delete[] garbo;
     delete[] xord;
   }
-  if(mode == "decrypt-garbage"){ 
-    cout << "garbage signifier: " << garbageSignifier << endl;
+  if(mode == "decrypt-garbage" || mode == "dg"){ 
     char * oc = fileReader(filename);
     char * xord = xorCharArray(oc, getReadFileSize(), password);
     vector<char> cleaned = deleteGarbage(xord, getReadFileSize(), garbageSignifier);
@@ -125,7 +124,7 @@ int main(int argc, char * argv[]){
     delete[] oc;
     delete[] xord;
   }
-  if(mode == "encrypt" || mode == "decrypt"){
+  if(mode == "encrypt" || mode == "decrypt" || mode == "e" || mode == "d"){
     char * oc = fileReader(filename);
     char * xord = xorCharArray(oc, getReadFileSize(), password);
     fileWriter(xord, getReadFileSize(), outputFilename);
@@ -134,7 +133,8 @@ int main(int argc, char * argv[]){
   }
   }
   else {
-	cout << "usage: xor-encryptor [mode] file password" << endl;
+	cout << "xwg v1.1" << endl;
+	cout << "usage: xor-encryptor [mode] --parameters " << endl;
   }
 
   return 0;
